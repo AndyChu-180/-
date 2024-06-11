@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元智幫幫忙</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/style.css')}}">
+</head>
+<body>
+    <div class="canvas-container">
+        <div id="Graph1" class="graph"></div>
+        <div id="Graph2" class="graph"></div>
+        <div id="Graph3" class="graph"></div>
+        <div id="Titanic" style="visibility: hidden;">{{ Titanic }}</div>
+        <div>
+            <canvas id="myCanvas" width="1000" height="1000"></canvas>
+        </div>
+        <div class="countdown-container">
+            <h1>倒數計時器</h1>
+            <ul id="countdown-list"></ul>
+        </div>
+    </div>
+    <div id="popupDialog">
+        <div class="button-container">
+            <button class="button" id="button1">全校男女比</button>
+            <button class="button" id="button2">各系人數</button>
+            <button class="button" id="button3">各系男女比</button>
+        </div>
+        <button class="button close-button" id="button4">關閉</button>
+    </div>
+    <p id="talkBox"></p>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+    <script>
+        const events = [
+            { name: "一階選課", date: new Date("2024-05-16T12:00:00+08:00") },
+            { name: "一階抽籤", date: new Date("2024-05-24T12:00:00+08:00") },
+            { name: "二階抽籤", date: new Date("2024-06-03T12:00:00+08:00") },
+            { name: "二階選課", date: new Date("2024-06-13T12:00:00+08:00") },
+            { name: "三階選課", date: new Date("2024-09-05T12:00:00+08:00") },
+            { name: "減修", date: new Date("2024-09-16T12:00:00+08:00") },
+            { name: "停修", date: new Date("2024-11-19T12:00:00+08:00") }
+        ];
+
+        function updateCountdowns() {
+            const now = new Date();
+            const countdownList = document.getElementById("countdown-list");
+            countdownList.innerHTML = "";
+            events.sort((a, b) => a.date - b.date);
+            events.forEach(event => {
+                const timeDiff = event.date - now;
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                const countdownItem = document.createElement("li");
+                countdownItem.innerText = `${event.name}倒數：${days >= 0 ? days : "-" + Math.abs(days)} 天 ${hours} 小時 ${minutes} 分鐘 ${seconds} 秒`;
+                countdownList.appendChild(countdownItem);
+            });
+        }
+
+        document.getElementById("button1").addEventListener("click", function() {
+        $("#Graph1").css("display", "block");
+        $("#Graph2").css("display", "none");
+        $("#Graph3").css("display", "none");
+    });
+    document.getElementById("button2").addEventListener("click", function() {
+        $("#Graph1").css("display", "none");
+        $("#Graph2").css("display", "block");
+        $("#Graph3").css("display", "none");
+    });
+    document.getElementById("button3").addEventListener("click", function() {
+        $("#Graph1").css("display", "none");
+        $("#Graph2").css("display", "none");
+        $("#Graph3").css("display", "block");
+    });
+    document.getElementById("button4").addEventListener("click", function() {
+        $("#Graph1").css("display", "none");
+        $("#Graph2").css("display", "none");
+        $("#Graph3").css("display", "none");
+        $("#popupDialog").css("display", "none");
+    });
+    
+
+        setInterval(updateCountdowns, 1000);
+    </script>
+    <script src="https://unpkg.com/jquery"></script>
+    <script src="{{url_for('static', filename='js/data.js')}}"></script>
+    <script src="{{url_for('static', filename='js/main.js')}}"></script>
+</body>
+</html>
